@@ -1,0 +1,89 @@
+#端口号设置
+port: ":8888"
+
+
+#日志存放位置，以及名称限制
+log:
+  logPath: "logs/req"
+  linkName: "logs/latest.log"
+
+
+#文件上传最大限制
+fileMax:
+  #upload file max limit #2Mb
+  staticFileMax: 2 << 20
+  #upload video max limit #50Mb
+  dynamicFileMax: 50 << 20
+
+##文件存储路径
+
+VideoPath: "./dynamic"
+FilePath: "./static"
+
+#redis连接配置
+redis:
+  username: "root"
+  password: "123456"
+  host: "192.168.245.33"
+  port: "6379"
+  db: "6"
+  poolsize: "10"
+  maxRetries: "5"
+
+#mysql连接配置
+mysql:
+  username: "root"
+  password: "123456"
+  host: "192.168.245.33"
+  port: "3306"
+  database: "pet_store"
+  charset: "utf8mb4"
+  timeout: "10"
+
+#casbin
+cabin:
+  type: "mysql"
+  username: "root"
+  password: "123456"
+  host: "192.168.245.33"
+  port: "3306"
+  database: "cabin"
+  exist: false
+
+#rabbitmq example:"amqp://guest:guest@192.168.245.33:5672/"
+rabbitmq:
+  url: "amqp://guest:guest@192.168.245.33:5672/"
+  username: "guest"
+  password: "guest"
+  host: "192.168.245.33"
+  port: "5672"
+
+#etcd
+etcd: [ "192.168.245.33:2379" ]
+
+#kafka
+kafka: [ "192.168.245.33:9092" ]
+
+click:
+  host: "192.168.245.33"
+  port: 8123
+  name: "root"
+  password: "123456"
+
+
+#语言
+language: "zh"
+
+#验证码缓存名称和
+captcha:  "captcha:"
+CaptchaExp: 1
+
+#登陆时长限制
+adminExp: 7
+userExp: 3
+#oracle
+#oracle: ["system/system@192.168.245.22:1521/XE"]
+
+
+#jwt密钥
+jwtKey: "gGOzNMZxvcBGfCUcrN0d"
