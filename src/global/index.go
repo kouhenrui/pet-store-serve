@@ -12,8 +12,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"ry_go/src/global/conf"
-	"ry_go/src/pojo"
+	"pet-store-serve/src/global/conf"
+	"pet-store-serve/src/pojo"
 	"time"
 )
 

@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"ry_go/src/dto/reqDto"
-	"ry_go/src/global"
-	"ry_go/src/msg"
-	"ry_go/src/service/common"
-	util "ry_go/src/utils"
+	"pet-store-serve/src/dto/reqDto"
+	"pet-store-serve/src/global"
+	"pet-store-serve/src/msg"
+	"pet-store-serve/src/service/common"
+	util "pet-store-serve/src/utils"
 	"strings"
 )
 

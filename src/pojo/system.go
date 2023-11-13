@@ -9,6 +9,11 @@ type Role struct {
 	Name string `json:"name" gorm:"name"`
 }
 
+type Class struct {
+	gorm.Model
+	Name string `json:"name" gorm:"name"`
+}
+
 //type RoleInterface interface {
 //	FindById(id int) (*Role, error)
 //}

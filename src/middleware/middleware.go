@@ -12,9 +12,7 @@ import (
 	"net/http"
 	"pet-store-serve/src/dto/comDto"
 	"pet-store-serve/src/global"
-	"pet-store-serve/src/inter"
 	"pet-store-serve/src/msg"
-	"pet-store-serve/src/pojo"
 	util "pet-store-serve/src/utils"
 	"strings"
 	"sync"
@@ -33,7 +31,7 @@ var (
 	requestCounts = make(map[string]int)
 	claims        comDto.TokenClaims
 
-	operationService = inter.OperateLogImpl{}
+	//operationService = inter.OperateLogImpl{}
 )
 
 /*
@@ -114,16 +112,16 @@ func LoggerMiddleWare() gin.HandlerFunc {
 				"query":     query,           //请求query
 				"message":   c.Errors,        //返回错误信息
 			})
-		operationLog := &pojo.OperationLog{
-			UserID:    c.GetUint("user_id"),
-			UserName:  c.GetString("user_name"),
-			Way:       method,
-			Path:      url,
-			Details:   rbody,
-			IP:        c.GetString("ip"),
-			UserAgent: c.GetHeader("User-Agent"),
-		}
-		_ = operationService.AddLog(operationLog)
+		//operationLog := &pojo.OperationLog{
+		//	UserID:    c.GetUint("user_id"),
+		//	UserName:  c.GetString("user_name"),
+		//	Way:       method,
+		//	Path:      url,
+		//	Details:   rbody,
+		//	IP:        c.GetString("ip"),
+		//	UserAgent: c.GetHeader("User-Agent"),
+		//}
+		//_ = operationService.AddLog(operationLog)
 
 		if len(c.Errors) > 0 { // 矿建内部错误
 			Log.Error(c.Errors.ByType(gin.ErrorTypePrivate))

@@ -19,7 +19,7 @@ func InitRoute() *gin.Engine {
 	r.Use(middleware.GolbalMiddleWare())          //token验证
 	r.Use(middleware.LoggerMiddleWare())          //日志捕捉
 	r.Use(middleware.UnifiedResponseMiddleware()) //全局统一返回格式
-	r.Use(middleware.IPInterceptor())             //根据方法访问次数限制ip地址
+	//r.Use(middleware.IPInterceptor())             //根据方法访问次数限制ip地址
 	//r.Use(middleware.CasbinMiddleWare())             //casbin挂载验证
 	r.Use(middleware.GlobalErrorMiddleware()) //错误捕捉
 	//r.Use(middleware.NotFoundAndMethodNotAllowedHandler()) //404，405

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"ry_go/src/dto/reqDto"
-	"ry_go/src/dto/resDto"
-	"ry_go/src/msg"
-	"ry_go/src/service/account"
-	util "ry_go/src/utils"
+	"pet-store-serve/src/dto/reqDto"
+	"pet-store-serve/src/dto/resDto"
+	"pet-store-serve/src/msg"
+	"pet-store-serve/src/service/account"
+	util "pet-store-serve/src/utils"
 	"time"
 )
 

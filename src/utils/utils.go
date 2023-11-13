@@ -122,3 +122,14 @@ func StructToArrayString(s interface{}) []string {
 
 	return result
 }
+
+// TODO 反射判断结构体字段是否为空
+func IsFieldEmpty(s interface{}, fieldName string) bool {
+	val := reflect.ValueOf(s).Elem() // 获取结构体的值（指针类型需要使用Elem()方法）
+
+	// 获取字段的值
+	fieldValue := val.FieldByName(fieldName)
+
+	// 判断字段是否为空或零值
+	return !fieldValue.IsValid() || reflect.DeepEqual(fieldValue.Interface(), reflect.Zero(fieldValue.Type()).Interface())
+}

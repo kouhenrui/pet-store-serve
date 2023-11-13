@@ -35,7 +35,7 @@ type AccountRepositoryInter interface {
 // TODO 根据手机号查询
 func (ap AccountRepositoryImpl) CheckByPhone(phone string) (*pojo.Account, error) {
 	a.Phone = phone
-	err := db.Preload("Role").First(a).Error
+	err := db.Preload("Roles").Find(&a).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -63,7 +63,7 @@ func (ap AccountRepositoryImpl) AccountList(list reqDto.AccountList) (*resDto.Co
 // TODO 查询账号
 func (ap AccountRepositoryImpl) CheckByNickName(nickName string) (*pojo.Account, error) {
 	a.NickName = nickName
-	err := db.Preload("Role").First(a).Error
+	err := db.Preload("Roles").First(a).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

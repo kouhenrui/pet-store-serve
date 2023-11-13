@@ -1,8 +1,8 @@
 package common
 
 import (
-	"ry_go/src/dto/reqDto"
-	util "ry_go/src/utils"
+	"pet-store-serve/src/dto/reqDto"
+	util "pet-store-serve/src/utils"
 )
 
 var (

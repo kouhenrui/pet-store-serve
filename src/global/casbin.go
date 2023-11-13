@@ -6,8 +6,8 @@ import (
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v2"
 	"log"
-	"ry_go/src/dto/comDto"
-	"ry_go/src/msg"
+	"pet-store-serve/src/dto/comDto"
+	"pet-store-serve/src/msg"
 )
 
 /**
