@@ -1,0 +1,7 @@
+time="2023-11-07T10:56:54+08:00" level=info Ip=127.0.0.1 Method=POST SpendTime="41 ms" body=login message= path=/api/auth/login proto=HTTP/1.1 query= status=200
+s=200
+ message="Error #01: Role: unsupported relations for schema Account\n" path=/api/auth/register proto=HTTP/1.1 query= status=200
+time="2023-11-07T10:49:21+08:00" level=info Ip=127.0.0.1 Method=POST SpendTime="13 ms" body=register message="Error #01: Role: unsupported relations for schema Account\n" path=/api/auth/register proto=HTTP/1.1 query= status=200
+ster proto=HTTP/1.1 query= status=200
+time="2023-11-07T10:47:10+08:00" level=error msg="Error #01: Role: unsupported relations for schema Account\n" Ip=127.0.0.1 Method=POST SpendTime="15 ms" body=register message="Error #01: Role: unsupported relations for schema Account\n" path=/api/auth/register proto=HTTP/1.1 query= status=200
+time="2023-11-07T10:47:10+08:00" level=info Ip=127.0.0.1 Method=POST SpendTime="15 ms" body=register message="Error #01: Role: unsupported relations for schema Account\n" path=/api/auth/register proto=HTTP/1.1 query= status=200

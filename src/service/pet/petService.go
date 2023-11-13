@@ -13,11 +13,12 @@ var (
 )
 
 type PetService struct{}
+
 type PetInter interface {
 	PetDel(id uint) error
-	PetAdd(add reqDto.PetTypeAdd) error
-	PetUpd(upd reqDto.PetTypeUpd) error
-	PetInfo(id uint) (*resDto.PetTypeInfo, error)
+	PetAdd(add reqDto.PetAdd) error
+	PetUpd(upd reqDto.PetUpd) error
+	PetInfo(id uint) (*resDto.PetInfo, error)
 
 	PetTypeDel(id uint) error
 	PetTypeAdd(add reqDto.PetTypeAdd) error
@@ -33,7 +34,16 @@ func (p PetService) PetDel(id uint) error {
 	}
 	return petRepository.PetTypeDel(id)
 }
+func (p PetService) PetAdd(add reqDto.PetAdd) error {
+	return petRepository.PetAdd(add)
+}
 
+func (p PetService) PetUpd(upd reqDto.PetUpd) error {
+	if _, err := p.PetInfo(upd.Id); err != nil {
+		return err
+	}
+	return petRepository.PetUpdate(upd)
+}
 func (p PetService) PetInfo(id uint) (*resDto.PetInfo, error) {
 	petInfo, err := petRepository.PetInfo(id)
 	if err != nil {
