@@ -177,6 +177,7 @@ func GolbalMiddleWare() gin.HandlerFunc {
 			c.Set("user_name", claims.Name)
 			c.Set("user_phone", claims.Phone)
 			c.Set("user_role", roles)
+			return
 			//if true {
 			//	cookieName := "token:" + claims.Name
 			//	fmt.Println(cookieName, "******************************")

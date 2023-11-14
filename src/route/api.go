@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	admin "pet-store-serve/src/controller/admin"
 	common "pet-store-serve/src/controller/common"
+	"pet-store-serve/src/controller/pet"
 )
 
 /**
@@ -24,6 +25,7 @@ func InitApi(route *gin.Engine) {
 		api.GET("/download", common.DownloadFile)
 
 		authModule := api.Group("/auth")
+		petModule := api.Group("/pet")
 		{
 			authModule.POST("/login", admin.Login)
 			authModule.GET("/info", admin.Info)
@@ -32,6 +34,11 @@ func InitApi(route *gin.Engine) {
 			authModule.GET("/account/profile", admin.AccountProfile)
 			authModule.PUT("/restet/pwd/self", admin.ResetPwdBySelf)
 		}
+		{
+			petModule.POST("/type/list", pet.PetTypeList)
+			petModule.GET("/type/info", pet.PetTypeInfo)
+		}
+
 	}
 
 }

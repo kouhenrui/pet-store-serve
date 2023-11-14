@@ -19,12 +19,13 @@ type PetInter interface {
 	PetAdd(add reqDto.PetAdd) error
 	PetUpd(upd reqDto.PetUpd) error
 	PetInfo(id uint) (*resDto.PetInfo, error)
+	PetList(list reqDto.PetList) (*resDto.CommonList, error)
 
 	PetTypeDel(id uint) error
 	PetTypeAdd(add reqDto.PetTypeAdd) error
 	PetTypeUpd(upd reqDto.PetTypeUpd) error
 	PetTypeInfo(id uint) (*resDto.PetTypeInfo, error)
-	PetList(list reqDto.PetList) (*resDto.CommonList, error)
+	PetTypeList(list reqDto.PetTypeList) (*resDto.CommonList, error)
 }
 
 func (p PetService) PetDel(id uint) error {
@@ -90,6 +91,13 @@ func (p PetService) PetTypeInfo(id uint) (*resDto.PetTypeInfo, error) {
 }
 func (p PetService) PetList(list reqDto.PetList) (*resDto.CommonList, error) {
 	resList, err := petRepository.PetList(list)
+	if err != nil {
+		return nil, err
+	}
+	return resList, nil
+}
+func (p PetService) PetTypeList(list reqDto.PetTypeList) (*resDto.CommonList, error) {
+	resList, err := petRepository.PetTypeList(list)
 	if err != nil {
 		return nil, err
 	}

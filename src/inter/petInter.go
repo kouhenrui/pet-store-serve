@@ -5,7 +5,6 @@ import (
 	"gorm.io/gorm"
 	"pet-store-serve/src/dto/reqDto"
 	"pet-store-serve/src/dto/resDto"
-	"pet-store-serve/src/msg"
 	"pet-store-serve/src/pojo"
 	util "pet-store-serve/src/utils"
 	"strconv"
@@ -23,6 +22,12 @@ type PetRepositoryInter interface {
 	PetTypeUpd(upd reqDto.PetTypeUpd) error
 	PetTypeInfo(id uint) (*resDto.PetTypeInfo, error)
 	PetTypeList(list reqDto.PetTypeList) (*resDto.CommonList, error)
+
+	PetClassDel(id uint) error
+	PetClassAdd(add reqDto.PetClassAdd) error
+	PetClassUpd(upd reqDto.PetClassUpd) error
+	PetClassInfo(id uint) (*resDto.PetClassInfo, error)
+	PetClassList(list reqDto.PetClassList) (*resDto.CommonList, error)
 }
 
 var (
@@ -116,22 +121,13 @@ func (pl PetRepositoryImpl) PetClassInfo(id uint) (*resDto.PetClassInfo, error) 
 
 // TODO pet修改
 func (pl PetRepositoryImpl) PetUpdate(upd reqDto.PetUpd) error {
-	info, err := pl.PetInfo(upd.Id)
-	if err != nil {
-		return errors.New(msg.INTERNAL_ERROR)
-	}
-	if info == nil && err == nil {
-		return errors.New(msg.SQL_NOT_EXIT_ERROR)
-	}
-	return db.Model(&pet).Updates(upd).Error
+	pet.ID = upd.Id
+	return db.Model(&pet).Updates(&upd).Error
 }
 
 // TODO pet根据id删除
 func (pl PetRepositoryImpl) PetDelete(id uint) error {
 	pet.ID = id
-	if info, err := pl.PetInfo(id); info == nil && err == nil {
-		return errors.New(msg.SQL_NOT_EXIT_ERROR)
-	}
 	return db.Delete(&pet).Error
 }
 
@@ -157,7 +153,7 @@ func (pl PetRepositoryImpl) PetTypeList(list reqDto.PetTypeList) (*resDto.Common
 
 // TODO petType修改
 func (pl PetRepositoryImpl) PetTypeUpd(upd reqDto.PetTypeUpd) error {
-	return db.Model(&petType).Updates(upd).Error
+	return db.Model(&petType).Updates(&upd).Error
 }
 
 // TODO petType删除
@@ -168,16 +164,10 @@ func (pl PetRepositoryImpl) PetTypeDel(id uint) error {
 
 // TODO petclass add
 func (pl PetRepositoryImpl) PetClassAdd(add reqDto.PetClassAdd) error {
-	//info, err := pl.PetTypeInfo(add.TypeId)
-	//if err != nil {
-	//	return errors.New(msg.INTERNAL_ERROR)
-	//}
-	//if info == nil && err == nil {
-	//	return errors.New(msg.SQL_NOT_EXIT_ERROR)
-	//}
 	return db.Model(&petClass).Create(&add).Error
 }
 
+// TODO petClass列表
 func (pl PetRepositoryImpl) PetClassList(list reqDto.PetClassList) (*resDto.CommonList, error) {
 	query := db.Model(&petClass)
 	if list.Name != "" {
@@ -194,4 +184,15 @@ func (pl PetRepositoryImpl) PetClassList(list reqDto.PetClassList) (*resDto.Comm
 	reslist.List = petClassList
 	reslist.Count = uint(count)
 	return &reslist, nil
+}
+
+// TODO petClass删除
+func (pl PetRepositoryImpl) PetClassDel(id uint) error {
+	petClass.ID = id
+	return db.Delete(&petClass).Error
+}
+
+func (pl PetRepositoryImpl) PetClassUpd(upd reqDto.PetClassUpd) error {
+	petClass.ID = upd.Id
+	return db.Model(&petClass).Updates(&upd).Error
 }

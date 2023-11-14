@@ -53,3 +53,8 @@ type PetClassList struct {
 	Name   string `json:"name" validate:"required"`
 	TypeId uint   `json:"type_id" validate:"required"`
 }
+type PetClassUpd struct {
+	Id     uint   `json:"id,omitempty" validate:"required"`
+	Name   string `json:"name,omitempty" validate:"required"`
+	TypeId uint   `json:"type_id"`
+}
