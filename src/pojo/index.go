@@ -13,9 +13,19 @@ func Repositoryinit(db *gorm.DB) {
 		&Pet{},      //宠物表
 		&PetClass{}, //宠物大类
 		&PetType{},  //宠物小类
+		&Menu{},
+		&OperationLog{},
 	)
 	if err != nil {
 		panic(err)
 	}
 	log.Println("结构表创建成功")
 }
+
+type PermissiobType string
+
+const (
+	a PermissiobType = "admin"
+
+	u PermissiobType = "user"
+)

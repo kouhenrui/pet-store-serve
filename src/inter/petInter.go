@@ -28,6 +28,8 @@ type PetRepositoryInter interface {
 	PetClassUpd(upd reqDto.PetClassUpd) error
 	PetClassInfo(id uint) (*resDto.PetClassInfo, error)
 	PetClassList(list reqDto.PetClassList) (*resDto.CommonList, error)
+
+	PetClassFindByTypeIdName(name string, typeId uint) (*resDto.PetClassInfo, error)
 }
 
 var (
@@ -195,4 +197,18 @@ func (pl PetRepositoryImpl) PetClassDel(id uint) error {
 func (pl PetRepositoryImpl) PetClassUpd(upd reqDto.PetClassUpd) error {
 	petClass.ID = upd.Id
 	return db.Model(&petClass).Updates(&upd).Error
+}
+
+func (pl PetRepositoryImpl) PetClassFindByTypeIdName(name string, typeId uint) (*resDto.PetClassInfo, error) {
+	var petClassInfo resDto.PetClassInfo
+	petClass.TypeId = typeId
+	petClass.Name = name
+	err := db.Model(&petClass).Preload("PetTypes").Find(&petClassInfo).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &petClassInfo, nil
 }

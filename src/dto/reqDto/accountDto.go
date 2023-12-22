@@ -1,13 +1,13 @@
 package reqDto
 
 type AccountLogin struct {
-	Phone    string `json:"phone" ` //binding:"len=12"
-	UserName string `json:"user_name"`
-	Password string `json:"password" binding:"required"`
-	Method   string `json:"method" validate:"required oneof=name phone,required"  example:"name" msg:"登录方式必填，但未填写"`
-	Revoke   bool   `json:"revoke" validate:"required" msg:"是否清除以前登录信息未填写"` //
-	Code     string `json:"code"  validate:"required" msg:"验证码未填写"`
-	Uuid     string `json:"uuid"  validate:"required" msg:"验证码id未填写"`
+	Phone     string `json:"phone" ` //binding:"len=12"
+	UserName  string `json:"user_name"`
+	Password  string `json:"password" binding:"required"`
+	Method    string `json:"method" validate:"required oneof=name phone,required"  example:"name" msg:"登录方式必填，但未填写"`
+	PhoneCode string `json:"phone_code" validate:"omitempty,required_if=Method,phone" msg:"验证码未填写"`
+	Code      string `json:"code"  validate:"omitempty,required_if=Method,name" msg:"验证码未填写"`
+	Uuid      string `json:"uuid"  validate:"omitempty,required_if=Method,name" msg:"验证码id未填写"`
 }
 type UpdateAccount struct {
 	Id       uint   `json:"id" binding:"required" example:"2"`

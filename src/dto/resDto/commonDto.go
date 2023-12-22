@@ -18,3 +18,11 @@ type TokenAndExp struct {
 	Token   string `json:"token,omitempty"`
 	Exptime string `json:"exptime"`
 }
+
+type Menutype string
+
+const (
+	C Menutype = "C"
+	F Menutype = "F"
+	M Menutype = "M"
+)

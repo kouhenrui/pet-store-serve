@@ -81,6 +81,7 @@ func ExistIn(param string, paths []string) bool {
  * @Date 2023/5/9 16:25
  */
 func FuzzyMatch(param string, paths []string) bool {
+	fmt.Println("正在匹配白名单")
 	for _, y := range paths {
 		if regexp.MustCompile(y).MatchString(param) {
 
@@ -89,6 +90,7 @@ func FuzzyMatch(param string, paths []string) bool {
 		}
 
 	}
+	fmt.Println("未在白名单")
 	return false
 }
 

@@ -66,4 +66,6 @@ const (
 
 	//公共方法
 	PARAM_ERROR = "参数类型错误"
+
+	LIMITER_ERROR = "请求过于频繁，请稍后重试"
 )

@@ -38,7 +38,7 @@ var (
 	minute          = time.Minute
 	ctx             = context.Background()
 	IpAccess        = []string{"127.0.0.1"}
-	WriteList       = []string{"/api/swagger/*", "/api/upload/file", "/api/captcha", "/api/auth/login", "/api/auth/register"}
+	WriteList       = []string{"/v1/api/swagger/*", "/v1/api/upload/file", "/v1/api/captcha", "/v1/api/auth/login", "/v1/api/auth/register", "/v1/api/static/file", "/v1/api/listen"}
 	EtcdArry        = []string{"192.168.245.22:2379"}
 )
 
@@ -116,12 +116,12 @@ func viperLoadConf() {
 	cn := v.GetStringMap("cabin")    //读取casbin配置
 	ck := v.GetStringMap("click")    //读取click house配置
 	//map转struct
-	mapstructure.Decode(mysql, &mysqlConf)
-	mapstructure.Decode(red, &redisConfig)
-	mapstructure.Decode(mq, &rabbitMQConfig)
-	mapstructure.Decode(logConfig, &logConf)
-	mapstructure.Decode(cn, &cabinConfig)
-	mapstructure.Decode(ck, &clickConfig)
+	_ = mapstructure.Decode(mysql, &mysqlConf)
+	_ = mapstructure.Decode(red, &redisConfig)
+	_ = mapstructure.Decode(mq, &rabbitMQConfig)
+	_ = mapstructure.Decode(logConfig, &logConf)
+	_ = mapstructure.Decode(cn, &cabinConfig)
+	_ = mapstructure.Decode(ck, &clickConfig)
 
 	//log.Print(CabinConfig, "参数")
 	//mapstructure.Decode(ca, &CaptchaConf)
@@ -136,7 +136,8 @@ func viperLoadConf() {
 	pojo.Repositoryinit(MysqlDClient) //表结构迁移
 	Redisinit()                       //redis初始化
 
-	//CabinInit() //rbac初始化
+	CabinInit() //rbac初始化
+	StartLimit()
 	//OracleInit()     //Oracle初始化
 	//ClickhouseInit() //click house初始化
 	//EtcdInit()

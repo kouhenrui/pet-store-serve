@@ -12,7 +12,9 @@ import (
 	"net/http"
 	"pet-store-serve/src/dto/comDto"
 	"pet-store-serve/src/global"
+	"pet-store-serve/src/inter"
 	"pet-store-serve/src/msg"
+	"pet-store-serve/src/pojo"
 	util "pet-store-serve/src/utils"
 	"strings"
 	"sync"
@@ -31,7 +33,8 @@ var (
 	requestCounts = make(map[string]int)
 	claims        comDto.TokenClaims
 
-	//operationService = inter.OperateLogImpl{}
+	operationService inter.OperateLogInter = &inter.OperateLogImpl{}
+	jwtService       util.JwtService
 )
 
 /*
@@ -79,24 +82,24 @@ func LoggerMiddleWare() gin.HandlerFunc {
 		method := c.Request.Method
 		url := c.Request.RequestURI
 
-		switch url {
-		case "/api/swagger/*":
-			rbody = "swage"
-			break
-		case "/api/upload/file":
-			rbody = "upload"
-			break
-		case "/api/captcha":
-			rbody = "captcha"
-
-			break
-		case "/api/auth/login":
-			rbody = "login"
-			break
-		case "/api/auth/register":
-			rbody = "register"
-
-		}
+		//switch url {
+		//case "/api/swagger/*":
+		//	rbody = "swage"
+		//	break
+		//case "/api/upload/file":
+		//	rbody = "upload"
+		//	break
+		//case "/api/captcha":
+		//	rbody = "captcha"
+		//
+		//	break
+		//case "/api/auth/login":
+		//	rbody = "login"
+		//	break
+		//case "/api/auth/register":
+		//	rbody = "register"
+		//
+		//}
 		//if util.ExistIn(url, global.WriteList) {
 		//	rbody = "uploads"
 		//}
@@ -112,16 +115,17 @@ func LoggerMiddleWare() gin.HandlerFunc {
 				"query":     query,           //请求query
 				"message":   c.Errors,        //返回错误信息
 			})
-		//operationLog := &pojo.OperationLog{
-		//	UserID:    c.GetUint("user_id"),
-		//	UserName:  c.GetString("user_name"),
-		//	Way:       method,
-		//	Path:      url,
-		//	Details:   rbody,
-		//	IP:        c.GetString("ip"),
-		//	UserAgent: c.GetHeader("User-Agent"),
-		//}
-		//_ = operationService.AddLog(operationLog)
+		operationLog := &pojo.OperationLog{
+			UserID:    c.GetUint("user_id"),
+			UserName:  c.GetString("user_name"),
+			Way:       method,
+			Path:      url,
+			Details:   rbody,
+			IP:        c.GetString("ip"),
+			UserAgent: c.GetHeader("User-Agent"),
+			Code:      statusCode,
+		}
+		_ = operationService.AddOperateLog(operationLog)
 
 		if len(c.Errors) > 0 { // 矿建内部错误
 			Log.Error(c.Errors.ByType(gin.ErrorTypePrivate))
@@ -158,13 +162,16 @@ func GolbalMiddleWare() gin.HandlerFunc {
 			//log.Println("不是公共访问路径")
 			//请求头是否携带token
 			existToken := c.GetHeader("Authorization")
+
+			//fmt.Println(existToken, "********************************************")
 			//判断token是否存在
-			if len(existToken) < 0 || existToken == "" {
+			token := strings.Split(existToken, " ")[1]
+			if len(token) < 1 || token == "" || token == "undefined" {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, msg.NO_AUTHORIZATION)
 				return
 			}
-			token := strings.Split(existToken, " ")[1]
-			claims = util.ParseToken(token)
+
+			claims = jwtService.ParseToken(token)
 			r := claims.Role
 			var roles []string
 			if len(r) > 0 {
@@ -177,7 +184,7 @@ func GolbalMiddleWare() gin.HandlerFunc {
 			c.Set("user_name", claims.Name)
 			c.Set("user_phone", claims.Phone)
 			c.Set("user_role", roles)
-			return
+			c.Next() //return
 			//if true {
 			//	cookieName := "token:" + claims.Name
 			//	fmt.Println(cookieName, "******************************")
@@ -196,10 +203,25 @@ func GolbalMiddleWare() gin.HandlerFunc {
 		}
 		c.Next()
 
-		return
+		//return
 		//ts := time.Since(t)
 		//fmt.Println("time", ts)
 		fmt.Println("token认证执行结束")
+
+	}
+}
+
+func LimiterMiddleWare() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		fmt.Println(global.Limiter.Tokens())
+		//fmt.Println(global.Limiter.Allow(), "令牌桶是否允许放行")
+		if global.Limiter.Allow() {
+			fmt.Println("运行通过")
+			c.Next()
+		} else {
+			c.AbortWithStatusJSON(http.StatusServiceUnavailable, msg.LIMITER_ERROR)
+			return
+		}
 
 	}
 }

@@ -12,3 +12,10 @@ type LoginRedisDate struct {
 	Token   string `json:"token"`
 	Exptime string `json:"exptime"`
 }
+type Menutype string
+
+const (
+	C Menutype = "C"
+	F Menutype = "F"
+	M Menutype = "M"
+)

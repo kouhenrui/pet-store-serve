@@ -16,9 +16,11 @@ type AllClaims struct {
 	jwt.StandardClaims
 	User comDto.TokenClaims
 }
+type JwtService struct {
+}
 
 // 颁发token inter
-func SignToken(infoClaims comDto.TokenClaims, day time.Duration) (t resDto.TokenAndExp) {
+func (j *JwtService) SignToken(infoClaims comDto.TokenClaims, day time.Duration) (t resDto.TokenAndExp) {
 	expireTime := time.Now().Add(day) //7天过期时间
 	claims := &AllClaims{
 		User: infoClaims,
@@ -53,12 +55,18 @@ func SignToken(infoClaims comDto.TokenClaims, day time.Duration) (t resDto.Token
 //}
 
 // 解析Token
-func ParseToken(tokenString string) comDto.TokenClaims {
-	//fmt.Println(token)
+func (j *JwtService) ParseToken(tokenString string) comDto.TokenClaims {
+	//fmt.Println(tokenString, "tokenstring")
 	//解析token
 	token, _ := jwt.ParseWithClaims(tokenString, &AllClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtkey, nil
 	})
+
+	//fmt.Println(token, "===============================")
 	user, _ := token.Claims.(*AllClaims)
+
 	return user.User
+}
+func (j *JwtService) RefreshToken() {
+
 }

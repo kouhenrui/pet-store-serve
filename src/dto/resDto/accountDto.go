@@ -18,15 +18,16 @@ type AccountList struct {
 
 // 详情数据
 type AccountInfo struct {
-	Id       uint     `json:"id"`
-	UserName string   `json:"name"`
-	NickName string   `json:"nick_name"`
-	Phone    string   `json:"phone"`
-	Role     []string `json:"role"`
-	Sex      int      `json:"sex" `
-	Avatar   string   `json:"avatar" `
-	Email    string   `json:"email"`
-	Class    string   `json:"class"`
+	Id         uint     `json:"id"`
+	UserName   string   `json:"name"`
+	NickName   string   `json:"nick_name"`
+	Phone      string   `json:"phone"`
+	Role       []string `json:"role"`
+	Sex        int      `json:"sex" `
+	Avatar     string   `json:"avatar" `
+	Email      string   `json:"email"`
+	Class      string   `json:"class"`
+	Permission []string `json:"permission"`
 }
 
 //type AdminInformation struct {

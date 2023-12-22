@@ -35,17 +35,17 @@ func CabinInit() {
 	log.Printf("权限初始化")
 	db := cabinConfig.UserName + ":" + cabinConfig.PassWord + "@tcp(" + cabinConfig.HOST + ":" + cabinConfig.Port + ")/"
 	//db加库名可以指定使用表或者自动创建表
-	log.Println(db, "连接参数")
+	//log.Println(db, "连接参数")
 
 	//"mysql_username:mysql_password@tcp(127.0.0.1:3306)/"
 	//a, aerr := gormadapter.NewAdapter(CasbinConfig.Type, db,true)//自己创建表
 	adapter, aerr := gormadapter.NewAdapter("mysql", db)
-	log.Print(adapter)
+	//log.Print(adapter)
 	if aerr != nil {
 		log.Printf("连接数据库错误：%s", adapter)
 		//panic(aerr)
 	}
-	log.Print("问题定位到")
+	//log.Print("问题定位到")
 	CabinDb, err = casbin.NewEnforcer(CabinModel, adapter)
 	if err != nil {
 		fmt.Println("加载模型出现错误", err)
@@ -64,25 +64,32 @@ func CabinInit() {
 	//check("superadmin", "", "")
 }
 
-type CabinPImpl struct{}
-type CabinGImpl struct{}
-type CabinPInter interface{}
+type CabinGInter interface {
+	PolicyList() [][]string
+	HasPolicy(policy *comDto.Cabin) bool
+	AddPolicy(add *comDto.Cabin) error
+	RemovePolicy(rem *comDto.Cabin) error
+	HasGroupingPolicy(gc *comDto.GCabin) bool
+	AddGroupingPolicy(gc *comDto.GCabin) error
+	RemoveGroupingPolicy(gc *comDto.GCabin) error
+}
+type CabinService struct{}
 
-func (p *CabinPImpl) PolicyList() [][]string {
+func (c CabinService) PolicyList() [][]string {
 	return CabinDb.GetPolicy()
 }
-func (p *CabinPImpl) HasPolicy(policy *comDto.Cabin) bool {
+func (c CabinService) HasPolicy(policy *comDto.Cabin) bool {
 	return CabinDb.HasPolicy(policy)
 }
-func (p *CabinPImpl) AddPolicy(add *comDto.Cabin) error {
+func (c CabinService) AddPolicy(add *comDto.Cabin) error {
 	_, err = CabinDb.AddPolicy(add)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-func (p *CabinPImpl) RemovePolicy(rem *comDto.Cabin) error {
-	if p.HasPolicy(rem) {
+func (c CabinService) RemovePolicy(rem *comDto.Cabin) error {
+	if c.HasPolicy(rem) {
 		_, err = CabinDb.RemovePolicy(rem)
 		if err != nil {
 			return err
@@ -103,22 +110,20 @@ func (p *CabinPImpl) RemovePolicy(rem *comDto.Cabin) error {
 //	return nil
 //}
 
-type CabinGInter interface{}
-
 // TODO 检验g组是否存在该角色/资源
-func (g *CabinGImpl) HasGroupingPolicy(gc *comDto.GCabin) bool {
+func (c CabinService) HasGroupingPolicy(gc *comDto.GCabin) bool {
 	return CabinDb.HasGroupingPolicy(gc.Sub, gc.Obj)
 }
 
 // TODO g组增加角色/资源
-func (g *CabinGImpl) AddGroupingPolicy(gc *comDto.GCabin) error {
+func (c CabinService) AddGroupingPolicy(gc *comDto.GCabin) error {
 	_, err = CabinDb.AddGroupingPolicy(gc.Sub, gc.Obj)
 	return err
 }
 
 // TODO g组删除角色/资源
-func (g *CabinGImpl) RemoveGroupingPolicy(gc *comDto.GCabin) error {
-	if g.HasGroupingPolicy(gc) {
+func (c CabinService) RemoveGroupingPolicy(gc *comDto.GCabin) error {
+	if c.HasGroupingPolicy(gc) {
 		_, err = CabinDb.RemoveGroupingPolicy(gc.Sub, gc.Obj)
 		return err
 	} else {
@@ -141,19 +146,19 @@ func (g *CabinGImpl) RemoveGroupingPolicy(gc *comDto.GCabin) error {
 //}
 
 // TODO （gc.Type决定组名，与model里的role g2对应名称）gc.Type是否存在该角色/资源
-func (g *CabinGImpl) HasNamedGroupingPolicy(gc *comDto.GCabin) bool {
+func (c CabinService) HasNamedGroupingPolicy(gc *comDto.GCabin) bool {
 	return CabinDb.HasNamedGroupingPolicy(gc.Type, gc.Sub, gc.Obj)
 }
 
 // TODO （gc.Type决定组名，与model里的role g2对应名称）gc.Type增加角色/资源
-func (g *CabinGImpl) AddNamedGroupingPolicy(gc *comDto.GCabin) error {
+func (c CabinService) AddNamedGroupingPolicy(gc *comDto.GCabin) error {
 	_, err = CabinDb.AddNamedGroupingPolicy(gc.Type, gc.Sub, gc.Obj)
 	return err
 }
 
 // TODO （gc.Type决定组名，与model里的role g2对应名称）gc.Type删除角色/资源
-func (g *CabinGImpl) RemoveNamedGroupingPolicy(gc *comDto.GCabin) error {
-	if g.HasNamedGroupingPolicy(gc) {
+func (c CabinService) RemoveNamedGroupingPolicy(gc *comDto.GCabin) error {
+	if c.HasNamedGroupingPolicy(gc) {
 		_, err = CabinDb.RemoveNamedGroupingPolicy(gc.Type, gc.Sub, gc.Obj)
 		return err
 	} else {

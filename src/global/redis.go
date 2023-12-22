@@ -36,6 +36,8 @@ func Redisinit() {
 	log.Printf("redis 初始化连接成功")
 }
 
+type RedisService struct{}
+
 // 添加数据
 func SetRedis(key string, value []byte, t time.Duration) error {
 	return RedisClient.Set(ctx, key, value, t).Err()

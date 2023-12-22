@@ -37,7 +37,7 @@ func Login(c *gin.Context) {
 	}
 	// 将Token设置到Cookie中
 	cookieName := "token:" + adminLogin.UserName
-	fmt.Println(cookieName, t)
+	//fmt.Println(cookieName, "000000000000000000000000", t)
 	c.SetCookie(cookieName, t.Token, int(time.Hour*24), c.GetString("reqUrl"), ip, false, true)
 	c.Set("res", t)
 	return
@@ -68,7 +68,7 @@ func LogOut(c *gin.Context) {
 // @Router		/auth/info [get]
 func Info(c *gin.Context) {
 	id := c.GetUint("user_id")
-	fmt.Println(id, "id")
+	//fmt.Println(id, "id")
 	var info = &resDto.AccountInfo{}
 	info, err = adminService.Info(id)
 	if err != nil {

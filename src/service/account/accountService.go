@@ -21,7 +21,8 @@ var (
 	err               error
 	commonService     common.CommonServiceImpl
 	accountRepository inter2.AccountRepositoryInter = &inter2.AccountRepositoryImpl{}
-	roleRepository    inter2.RoleInter              = &inter2.RoleRepositoryImpl{}
+	sysRepository     inter2.SysInter               = &inter2.SysRepositoryImpl{}
+	jwtService        util.JwtService
 )
 
 type AccountInter interface {
@@ -29,6 +30,7 @@ type AccountInter interface {
 	Register(body reqDto.AddAccount) error
 	Info(id uint) (*resDto.AccountInfo, error)
 	ResetPwdBySelf(body reqDto.UpdateAccount) error
+	RefreshToken(oldToken, ip string) (resDto.TokenAndExp, error)
 }
 type AccountService struct{}
 
@@ -75,29 +77,20 @@ func (i AccountService) Login(body reqDto.AccountLogin, ip string) (t resDto.Tok
 		Role:     account.Roles,
 		Class:    account.Class,
 	}
-	//去除登录记录
-	if body.Revoke {
-		if len(account.AccessToken) > 0 {
-			if redisErr {
-				_ = global.DelRedis(account.AccessToken)
-			}
-			err = accountRepository.RemoveAccessToken(account.ID)
-		}
-		t, err = i.tokenRedis(tokenDate, ip)
-	} else {
-		if len(account.AccessToken) > 0 {
-			if redisErr {
-				tokenValue := global.GetRedis(account.AccessToken)
-				util.UnMarshal([]byte(tokenValue), &t)
-			} else {
 
-				t, err = i.tokenRedis(tokenDate, ip)
-				fmt.Println(t, "t1*****************")
-			}
+	if len(account.AccessToken) > 0 {
+		if redisErr {
+			tokenValue := global.GetRedis(account.AccessToken)
+			util.UnMarshal([]byte(tokenValue), &t)
 		} else {
+
 			t, err = i.tokenRedis(tokenDate, ip)
+			fmt.Println(t, "t1*****************")
 		}
+	} else {
+		t, err = i.tokenRedis(tokenDate, ip)
 	}
+
 	return t, nil
 }
 
@@ -132,7 +125,7 @@ func (i AccountService) tokenRedis(tokenDate comDto.TokenClaims, ip string) (t r
 		tt = global.UserExp
 		break
 	}
-	t = util.SignToken(tokenDate, tt)
+	t = jwtService.SignToken(tokenDate, tt)
 	//生成access_token
 	access_token := util.Rand6String()
 	//redis缓存token
@@ -141,6 +134,27 @@ func (i AccountService) tokenRedis(tokenDate comDto.TokenClaims, ip string) (t r
 	}
 	//数据库保存access_token
 	if err = accountRepository.UpdateToken(access_token, account.ID, ip); err != nil {
+		return t, err
+	}
+	return t, nil
+}
+func (i AccountService) refreshTokenRedis(tokenDate comDto.TokenClaims, ip, accessToken string) (t resDto.TokenAndExp, err error) {
+	var tt time.Duration
+	switch tokenDate.Class {
+	case "admin":
+		tt = global.AdminExp
+		break
+	case "user":
+		tt = global.UserExp
+		break
+	}
+	t = jwtService.SignToken(tokenDate, tt)
+	//redis缓存token
+	if err = global.SetRedis(accessToken, util.Marshal(t), tt); err != nil {
+		return t, err
+	}
+	//数据库保存access_token
+	if err = accountRepository.UpdateToken(accessToken, account.ID, ip); err != nil {
 		return t, err
 	}
 	return t, nil
@@ -170,7 +184,7 @@ func (i AccountService) Register(body reqDto.AddAccount) error {
 	if len(body.Role) > 0 {
 		for _, id := range body.Role {
 			var singleRole pojo.Role
-			findRole, signErr := roleRepository.FindById(id)
+			findRole, signErr := sysRepository.FindById(id)
 			if signErr != nil {
 				return err
 			}
@@ -211,4 +225,18 @@ func (i AccountService) ResetPwdBySelf(body reqDto.UpdateAccount) error {
 	}
 	var enpwd, _ = util.EnPwdCode(body.Password, info.Salt)
 	return accountRepository.ResetPwdBySelf(body.Id, enpwd)
+}
+
+// TODO 刷新token
+func (i AccountService) RefreshToken(oldToken, ip string) (resDto.TokenAndExp, error) {
+
+	var userClaims comDto.TokenClaims
+	userClaims = jwtService.ParseToken(oldToken)
+	account, _ = accountRepository.AccountInfo(userClaims.Id)
+
+	accessToken := account.AccessToken
+	tokenExp := resDto.TokenAndExp{}
+	tokenExp, err = i.refreshTokenRedis(userClaims, ip, accessToken)
+	return tokenExp, nil
+	//util.ParseToken()
 }
